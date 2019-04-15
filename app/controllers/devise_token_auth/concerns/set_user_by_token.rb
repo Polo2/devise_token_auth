@@ -110,12 +110,16 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     puts "T9"*33
     puts "user"
     puts user
-
+    puts "user.email"
+    puts user.email
+    puts "@token"
+    puts @token
+    puts "@client_id"
+    puts @client_id
+    puts "-----"
     puts "user.valid_token?(@token, @client_id)"
     puts user.valid_token?(@token, @client_id)
 
-    puts "user.email"
-    puts user.email
 
     if user && user.valid_token?(@token, @client_id)
       puts "T10"*33
