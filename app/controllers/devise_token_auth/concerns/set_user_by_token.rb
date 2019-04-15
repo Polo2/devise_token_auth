@@ -110,6 +110,13 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     puts "T9"*33
     puts "user"
     puts user
+
+    puts "user.valid_token?(@token, @client_id)"
+    puts user.valid_token?(@token, @client_id)
+
+    puts "user.email"
+    puts user.email
+
     if user && user.valid_token?(@token, @client_id)
       puts "T10"*33
       # sign_in with bypass: true will be deprecated in the next version of Devise
