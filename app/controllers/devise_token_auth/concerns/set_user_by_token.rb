@@ -133,8 +133,11 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     puts "user.valid_token?(@token, @client_id)"
     puts user.valid_token?(@token, @client_id)
 
-    debug_token = @token[0..-1]
-    debug_client = @client_id[0..-1]
+    debug_token = @token[0..-2]
+    puts "debug without comma"
+    puts debug_token
+    debug_client = @client_id[0..-2]
+    puts debug_client
     puts "user.valid_token?(@token, @client_id) without ,"
 
     puts user.valid_token?(debug_token, debug_client)
