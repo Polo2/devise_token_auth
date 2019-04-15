@@ -35,9 +35,11 @@ module DeviseTokenAuth::Concerns::SetUserByToken
 
   # user auth
   def set_user_by_token(mapping=nil)
+    puts "T0"*33
     # determine target authentication class
     rc = resource_class(mapping)
-
+    puts "T1"*33
+    puts rc
     # no default user defined
     return unless rc
 
@@ -45,6 +47,14 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     uid_name = DeviseTokenAuth.headers_names[:'uid']
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
+
+    puts "T2"*33
+    puts "uid_name"
+    puts uid_name
+    puts "access_token_name"
+    puts access_token_name
+    puts "client_name"
+    puts client_name
 
     # parse header for values necessary for authentication
     uid        = request.headers[uid_name] || params[uid_name]
@@ -54,21 +64,40 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # client_id isn't required, set to 'default' if absent
     @client_id ||= 'default'
 
+
+    puts "T3"*33
+    puts "uid"
+    puts uid
+    puts "@token"
+    puts @token
+    puts "@client_id"
+    puts @client_id
+
     # check for an existing user, authenticated via warden/devise, if enabled
     if DeviseTokenAuth.enable_standard_devise_support
+      puts "T4"*33
       devise_warden_user = warden.user(rc.to_s.underscore.to_sym)
+      puts "devise_warden_user"
+      puts devise_warden_user
       if devise_warden_user && devise_warden_user.tokens[@client_id].nil?
         @used_auth_by_token = false
         @resource = devise_warden_user
         @resource.create_new_auth_token
+        puts "T5"*33
+        puts "@resource"
+        puts @resource
       end
     end
 
     # user has already been found and authenticated
+    puts "T6"*33
+    puts "user found and authenticated ?"
+    puts (@resource && @resource.is_a?(rc))
     return @resource if @resource && @resource.is_a?(rc)
 
     # ensure we clear the client_id
     if !@token
+      puts "T7"*33
       @client_id = nil
       return
     end
@@ -76,17 +105,24 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     return false unless @token
 
     # mitigate timing attacks by finding by uid instead of auth token
+    puts "T8"*33
     user = uid && rc.find_by(uid: uid)
-
+    puts "T9"*33
+    puts "user"
+    puts user
     if user && user.valid_token?(@token, @client_id)
+      puts "T10"*33
       # sign_in with bypass: true will be deprecated in the next version of Devise
       if self.respond_to?(:bypass_sign_in) && DeviseTokenAuth.bypass_sign_in
+        puts "T11"*33
         bypass_sign_in(user, scope: :user)
       else
+        puts "T12"*33
         sign_in(:user, user, store: false, event: :fetch, bypass: DeviseTokenAuth.bypass_sign_in)
       end
       return @resource = user
     else
+      puts "T13"*33
       # zero all values previously set values
       @client_id = nil
       return @resource = nil

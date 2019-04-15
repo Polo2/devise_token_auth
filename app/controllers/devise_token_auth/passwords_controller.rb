@@ -79,25 +79,35 @@ module DeviseTokenAuth
     end
 
     def update
+      puts "U0"*33
       # make sure user is authorized
       unless @resource
         return render_update_error_unauthorized
       end
 
+      puts "U1"*33
+      puts "resource"
+      puts @resource
+      puts "resource.provider"
+      puts @resource.provider
       # make sure account doesn't use oauth2 provider
       unless @resource.provider == 'email'
         return render_update_error_password_not_required
       end
 
+      puts "U2"*33
       # ensure that password params were sent
       unless password_resource_params[:password] && password_resource_params[:password_confirmation]
         return render_update_error_missing_password
       end
 
       if @resource.send(resource_update_method, password_resource_params)
+
+        puts "US3"*33
         @resource.allow_password_change = false if recoverable_enabled?
         @resource.save!
-
+        puts "US4"*33
+        puts @resource
         yield @resource if block_given?
         return render_update_success
       else
@@ -108,10 +118,14 @@ module DeviseTokenAuth
     protected
 
     def resource_update_method
+      puts "*"*30
+      puts "RUM"
       allow_password_change = recoverable_enabled? && @resource.allow_password_change == true
       if DeviseTokenAuth.check_current_password_before_update == false || allow_password_change
+        puts "RUM UA"
         "update_attributes"
       else
+        puts "RUM UWP"
         "update_with_password"
       end
     end
