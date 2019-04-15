@@ -96,6 +96,8 @@ module DeviseTokenAuth
       end
 
       puts "U2"*33
+      puts password_resource_params[:password]
+      password_resource_params[:password_confirmation]
       # ensure that password params were sent
       unless password_resource_params[:password] && password_resource_params[:password_confirmation]
         return render_update_error_missing_password
